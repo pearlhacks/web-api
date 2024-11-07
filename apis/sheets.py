@@ -1,7 +1,7 @@
 # apis/sheets.py
 
 import os
-
+from dotenv import load_dotenv
 
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
@@ -15,7 +15,8 @@ from models.directors import Director
 from models.faq import FAQ
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
-SHEET_ID = '16YJSaBwjpGRq81ryZ-Z284HkgKwYvg2MHjkBpD0IaJk'
+load_dotenv()
+SHEET_ID = os.getenv('SHEET_ID')
 
 # Cache variables
 _schedules = None
