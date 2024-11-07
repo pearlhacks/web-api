@@ -1,25 +1,19 @@
 # models/faq.py
 
-class FAQ:
-    def __init__(self, answer, category, question):
-        self.answer = answer
-        self.category = category
-        self.question = question
+from pydantic import BaseModel
 
-    def __repr__(self):
-        return f"FAQ(question='{self.question}', category='{self.category}')"
+class FAQ(BaseModel):
+    question: str
+    answer: str
+    category: str
 
     def to_dict(self):
-        return {
-            "question": self.question,
-            "answer": self.answer,
-            "category": self.category,
-        }
+        return self.dict()
 
     @classmethod
     def from_dict(cls, data):
         return cls(
-            question=data.get('Question'),
-            answer=data.get('Answer'),
-            category=data.get('Category')
+            question=data.get("Question", ""),
+            answer=data.get("Answer", ""),
+            category=data.get("Category", "")
         )

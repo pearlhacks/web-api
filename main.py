@@ -1,30 +1,13 @@
 # main.py
 
-from apis import sheets
+import uvicorn
+from fastapi import FastAPI
+from routes.sheet import sheet_router
+
+app = FastAPI()
+
+# Include the router
+app.include_router(sheet_router)
 
 if __name__ == '__main__':
-    schedules = sheets.getSchedule()
-    resources = sheets.getResource()
-    sponsors = sheets.getSponsor()
-    directors = sheets.getDirector()
-    faqs = sheets.getFAQ()
-
-    print("Schedules:")
-    for schedule in schedules:
-        print(schedule)
-
-    print("\nResources:")
-    for resource in resources:
-        print(resource)
-
-    print("\nSponsors:")
-    for sponsor in sponsors:
-        print(sponsor)
-
-    print("\nDirectors:")
-    for director in directors:
-        print(director)
-
-    print("\nFAQs:")
-    for faq in faqs:
-        print(faq)
+    uvicorn.run("main:app", host="0.0.0.0", port=5000, reload=True)
