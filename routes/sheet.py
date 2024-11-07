@@ -1,7 +1,7 @@
 # routes/sheet.py
 
 from fastapi import APIRouter
-from apis import sheets  # Import your sheets API module
+from apis import sheets
 from models.directors import Director
 from models.schedule import Schedule
 from models.resources import Resource

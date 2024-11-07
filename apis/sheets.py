@@ -3,7 +3,10 @@
 import os
 from flask import Blueprint, jsonify
 from apis import sheets
+from apis.firebase_storage import generate_signed_url
 from dotenv import load_dotenv
+
+
 
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
@@ -87,17 +90,26 @@ def getSponsor():
     return _sponsors
 
 
-def getDirector():
-    global _directors
-    if _directors is None:
-        data = read_sheet_data('directors')
-        _directors = [Director.from_dict(item) for item in data]
-    return _directors
-
-
 def getFAQ():
     global _faqs
     if _faqs is None:
         data = read_sheet_data('faq')
         _faqs = [FAQ.from_dict(item) for item in data]
     return _faqs
+
+
+def getDirector():
+    global _directors
+    if _directors is None:
+        data = read_sheet_data('directors')
+        _directors = []
+        for item in data:
+            director = Director.from_dict(item)
+            if director.image:
+                image_file_path = f"directors/{director.image}"  # Assuming the image field contains the filename
+                image_url = generate_signed_url(image_file_path)
+                director.image_url = image_url
+            else:
+                director.image_url = None
+            _directors.append(director)
+    return _directors
