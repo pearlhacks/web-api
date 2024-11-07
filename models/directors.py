@@ -1,6 +1,7 @@
 # models/director.py
 
 from pydantic import BaseModel
+from typing import Optional
 
 class Director(BaseModel):
     name: str
@@ -9,6 +10,7 @@ class Director(BaseModel):
     role: str
     chair: str
     department: str
+    image_url: Optional[str] = None
 
     def to_dict(self):
         return self.dict()

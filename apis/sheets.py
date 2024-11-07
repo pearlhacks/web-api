@@ -106,7 +106,7 @@ def getDirector():
         for item in data:
             director = Director.from_dict(item)
             if director.image:
-                image_file_path = f"directors/{director.image}"  # Assuming the image field contains the filename
+                image_file_path = f"{director.image}"  # Assuming the image field contains the filename
                 image_url = generate_signed_url(image_file_path)
                 director.image_url = image_url
             else:
