@@ -1,9 +1,9 @@
-# fly.toml app configuration file generated for google-sheets-api-pearl-hacks on 2024-11-07T19:56:31-05:00
+# fly.toml app configuration file generated for web-api-pearl-hacks on 2024-11-07T22:50:02-05:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'google-sheets-api-pearl-hacks'
+app = 'web-api-pearl-hacks'
 primary_region = 'iad'
 
 [build]
