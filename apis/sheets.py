@@ -51,7 +51,7 @@ def get_sheets_service():
 
 def read_sheet_data(page):
     service = get_sheets_service()
-    RANGE_NAME = f'{page}!A1:H10'  # Adjust the range as needed
+    RANGE_NAME = f'{page}!A1:X99'  # Adjust the range as needed
 
     sheet = service.spreadsheets()
     result = sheet.values().get(spreadsheetId=SHEET_ID, range=RANGE_NAME).execute()
