@@ -1,5 +1,5 @@
 # apis/firebase_storage.py
-
+import datetime
 import os
 import firebase_admin
 from firebase_admin import credentials, storage
@@ -23,10 +23,15 @@ def generate_signed_url(file_path):
     initialize_firebase()
     bucket = storage.bucket()
     blob = bucket.blob(file_path)
+    
     if not blob.exists():
         print(f"File {file_path} does not exist in Firebase Storage.")
         return None
-    url = blob.generate_signed_url(expiration=3600)  # URL valid for 1 hour
+
+    expiration_time = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds=3600)
+
+    url = blob.generate_signed_url(expiration=expiration_time)
+    print(f"Generated URL: {url}")
     return url
 
 def list_photos_in_folder(folder_name):
