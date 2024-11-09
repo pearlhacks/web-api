@@ -7,13 +7,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Initialize Firebase Admin SDK
 def initialize_firebase():
     if not firebase_admin._apps:
         service_account_path = os.getenv('GOOGLE_APPLICATION_CREDENTIALS')
         if not service_account_path:
             raise ValueError("Service account key path not found in environment variables.")
 
+        # reinit with a fresh app
         cred = credentials.Certificate(service_account_path)
         firebase_admin.initialize_app(cred, {
             'storageBucket': os.getenv('NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET')
