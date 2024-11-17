@@ -1,5 +1,7 @@
 # Pearl Hacks Web APIs 
 
+This repository contains the backend code for the Pearl Hacks 2025 project.
+
 ## Tech Stack
 
 - **Backend Framework**: FastAPI
