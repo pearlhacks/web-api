@@ -10,18 +10,18 @@
 ## File Structure
 
 ```
-┣.github
-┃ ┗ workflows       # GitHub Actions workflow configurations
-┣ apis              # API endpoints and business logic
-┣ models            # Data models and schemas
-┣ routes            # Route handlers and endpoints
-┣ .dockerignore     # Docker ignore file
-┣ .gitignore        # Git ignore file
-┣ Dockerfile        # Docker configuration
-┣ init.py           # Python package initializer
-┣ fly.toml          # Fly.io configuration
-┣ main.py           # Application entry point
-┗ requirements.txt  # Python dependencies
+├── .github/
+│   └── workflows/       # GitHub Actions workflow configurations
+├── apis/                # API endpoints and business logic
+├── models/              # Data models and schemas
+├── routes/              # Route handlers and endpoints
+├── .dockerignore        # Docker ignore file
+├── .gitignore           # Git ignore file
+├── Dockerfile           # Docker configuration
+├── init.py              # Python package initializer
+├── fly.toml             # Fly.io configuration
+├── main.py              # Application entry point
+└── requirements.txt     # Python dependencies
 ```
 
 ## Getting Started
