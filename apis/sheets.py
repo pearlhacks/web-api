@@ -3,6 +3,7 @@
 import os
 from flask import Blueprint, jsonify
 from apis import sheets
+from typing import List
 from apis.firebase_storage import generate_signed_url
 from dotenv import load_dotenv
 
@@ -15,6 +16,7 @@ from google.auth.transport.requests import Request
 
 from models.schedule import Schedule
 from models.resources import Resource
+from models.devpost_link import DevpostLink
 from models.sponsors import Sponsor
 from models.directors import Director
 from models.faq import FAQ
@@ -113,3 +115,25 @@ def getDirector():
                 director.image_url = None
             _directors.append(director)
     return _directors
+
+
+def getDevpostLinks():
+    """
+    Retrieves resources with types 'devpost' and organizes them into DevpostLink objects.
+    """
+    try:
+        data = read_sheet_data('resources')
+        # Filter resources with types 'devpost'
+        filtered_data = [item for item in data if item.get("types", "").lower() == "devpost"]
+
+        devpost_links = []
+        for item in filtered_data:
+            title = item.get("title", "").strip()
+            img_url = item.get("img_url", "").strip()
+            url = item.get("url", "").strip()
+            if title and img_url and url:
+                devpost_links.append(DevpostLink(title=title, img_url=img_url, url=url))
+
+        return devpost_links
+    except:
+        return []

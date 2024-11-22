@@ -1,7 +1,11 @@
 # routes/sheet.py
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from apis import sheets
+from apis.sheets import getDevpostLinks # add getLinks after making getLinks()
+from typing import List
+#from models.resource_link import ResourceLink
+from models.devpost_link import DevpostLink
 from models.directors import Director
 from models.schedule import Schedule
 from models.resources import Resource
@@ -39,3 +43,23 @@ def get_faqs():
     faqs = sheets.getFAQ()
     data = [faq.to_dict() for faq in faqs]
     return {"faqs": data}
+
+# @sheet_router.get("/sheet/links", response_model=List[ResourceLink])
+# def get_resource_links():
+#     """
+#     Endpoint to retrieve general resource links.
+#     """
+#     links = getLinks()
+#     if not links:
+#         raise HTTPException(status_code=404, detail="No resource links found.")
+#     return links
+
+@sheet_router.get("/sheet/devpost_links", response_model=List[DevpostLink])
+def get_devpost_resource_links():
+    """
+    Endpoint to retrieve Devpost-specific resource links.
+    """
+    devpost_links = getDevpostLinks()
+    if not devpost_links:
+        raise HTTPException(status_code=404, detail="No Devpost resource links found.")
+    return devpost_links

@@ -1,6 +1,8 @@
 # models/resource.py
 
 from pydantic import BaseModel
+from typing import List
+
 
 class Resource(BaseModel):
     category: str
@@ -8,6 +10,7 @@ class Resource(BaseModel):
     title: str
     resource_type: str  # Renamed from 'type' to 'resource_type'
     url: str
+    links: List[str]
 
     def to_dict(self):
         return self.dict()
