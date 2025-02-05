@@ -7,6 +7,7 @@ from models.schedule import Schedule
 from models.resources import Resource
 from models.sponsors import Sponsor
 from models.faq import FAQ
+from models.prizes import Prize
 
 sheet_router = APIRouter()
 
@@ -33,6 +34,12 @@ def get_sponsors():
     sponsors = sheets.getSponsor()
     data = [sponsor.to_dict() for sponsor in sponsors]
     return {"sponsors": data}
+
+@sheet_router.get("/sheet/prizes", response_model = dict)
+def get_prizes():
+    prizes = sheets.getPrizes()
+    data = [prize.to_dict() for prize in prizes]
+    return {"prizes": data}
 
 @sheet_router.get("/sheet/faqs", response_model=dict)
 def get_faqs():

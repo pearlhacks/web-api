@@ -18,6 +18,7 @@ from models.resources import Resource
 from models.sponsors import Sponsor
 from models.directors import Director
 from models.faq import FAQ
+from models.prizes import Prize
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 load_dotenv()
@@ -29,7 +30,7 @@ _resources = None
 _sponsors = None
 _directors = None
 _faqs = None
-
+_prizes = None
 
 def get_sheets_service():
     creds = None
@@ -97,6 +98,12 @@ def getFAQ():
         _faqs = [FAQ.from_dict(item) for item in data]
     return _faqs
 
+def getPrizes():
+    global _prizes
+    if _prizes is None:
+        data = read_sheet_data('prizes')
+        _prizes = [Prize.from_dict(item) for item in data]
+    return _prizes
 
 def getDirector():
     global _directors
