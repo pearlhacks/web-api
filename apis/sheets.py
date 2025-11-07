@@ -1,6 +1,7 @@
 # apis/sheets.py
 
 import os
+import time
 from flask import Blueprint, jsonify
 from apis import sheets
 from apis.firebase_storage import generate_signed_url
@@ -24,13 +25,18 @@ SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 load_dotenv()
 SHEET_ID = os.getenv('SHEET_ID')
 
-# Cache variables
-_schedules = None
-_resources = None
-_sponsors = None
-_directors = None
-_faqs = None
-_prizes = None
+# Cache TTL in seconds (default: 5 minutes)
+CACHE_TTL_SECONDS = int(os.getenv('CACHE_TTL_SECONDS', 300))
+
+# Cache variables - now stores data with timestamp
+_cache = {
+    'schedules': {'data': None, 'timestamp': None},
+    'resources': {'data': None, 'timestamp': None},
+    'sponsors': {'data': None, 'timestamp': None},
+    'directors': {'data': None, 'timestamp': None},
+    'faqs': {'data': None, 'timestamp': None},
+    'prizes': {'data': None, 'timestamp': None}
+}
 
 def get_sheets_service():
     creds = None
@@ -67,49 +73,93 @@ def read_sheet_data(page):
         return data
 
 
+def is_cache_expired(cache_key):
+    """Check if cache for the given key is expired or doesn't exist"""
+    cache_entry = _cache.get(cache_key)
+    if cache_entry['data'] is None or cache_entry['timestamp'] is None:
+        return True
+
+    elapsed_time = time.time() - cache_entry['timestamp']
+    return elapsed_time > CACHE_TTL_SECONDS
+
+
+def invalidate_cache(cache_key=None):
+    """
+    Invalidate cache for a specific key or all caches if no key is provided.
+
+    Args:
+        cache_key: Specific cache to invalidate (e.g., 'schedules', 'resources')
+                   If None, invalidates all caches
+
+    Returns:
+        List of invalidated cache keys
+    """
+    global _cache
+
+    if cache_key is None:
+        # Invalidate all caches
+        invalidated = []
+        for key in _cache.keys():
+            _cache[key] = {'data': None, 'timestamp': None}
+            invalidated.append(key)
+        return invalidated
+    else:
+        # Invalidate specific cache
+        if cache_key in _cache:
+            _cache[cache_key] = {'data': None, 'timestamp': None}
+            return [cache_key]
+        else:
+            return []
+
+
 def getSchedule():
-    global _schedules
-    if _schedules is None:
+    global _cache
+    if is_cache_expired('schedules'):
         data = read_sheet_data('schedule')
-        _schedules = [Schedule.from_dict(item) for item in data]
-    return _schedules
+        _cache['schedules']['data'] = [Schedule.from_dict(item) for item in data]
+        _cache['schedules']['timestamp'] = time.time()
+    return _cache['schedules']['data']
 
 
 def getResource():
-    global _resources
-    if _resources is None:
+    global _cache
+    if is_cache_expired('resources'):
         data = read_sheet_data('resources')
-        _resources = [Resource.from_dict(item) for item in data]
-    return _resources
+        _cache['resources']['data'] = [Resource.from_dict(item) for item in data]
+        _cache['resources']['timestamp'] = time.time()
+    return _cache['resources']['data']
 
 
 def getSponsor():
-    global _sponsors
-    if _sponsors is None:
+    global _cache
+    if is_cache_expired('sponsors'):
         data = read_sheet_data('sponsors')
-        _sponsors = [Sponsor.from_dict(item) for item in data]
-    return _sponsors
+        _cache['sponsors']['data'] = [Sponsor.from_dict(item) for item in data]
+        _cache['sponsors']['timestamp'] = time.time()
+    return _cache['sponsors']['data']
 
 
 def getFAQ():
-    global _faqs
-    if _faqs is None:
+    global _cache
+    if is_cache_expired('faqs'):
         data = read_sheet_data('faq')
-        _faqs = [FAQ.from_dict(item) for item in data]
-    return _faqs
+        _cache['faqs']['data'] = [FAQ.from_dict(item) for item in data]
+        _cache['faqs']['timestamp'] = time.time()
+    return _cache['faqs']['data']
 
 def getPrizes():
-    global _prizes
-    if _prizes is None:
+    global _cache
+    if is_cache_expired('prizes'):
         data = read_sheet_data('prizes')
-        _prizes = [Prize.from_dict(item) for item in data]
-    return _prizes
+        _cache['prizes']['data'] = [Prize.from_dict(item) for item in data]
+        _cache['prizes']['timestamp'] = time.time()
+    return _cache['prizes']['data']
 
 def getDirector():
-    global _directors
-    if _directors is None:
+    global _cache
+    if is_cache_expired('directors'):
         data = read_sheet_data('directors')
-        _directors = []
+        directors_list = []
         for item in data:
             director = Director.from_dict(item)
             if director.image:
@@ -118,5 +168,7 @@ def getDirector():
                 director.image_url = image_url
             else:
                 director.image_url = None
-            _directors.append(director)
-    return _directors
+            directors_list.append(director)
+        _cache['directors']['data'] = directors_list
+        _cache['directors']['timestamp'] = time.time()
+    return _cache['directors']['data']

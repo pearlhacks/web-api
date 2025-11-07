@@ -46,3 +46,31 @@ def get_faqs():
     faqs = sheets.getFAQ()
     data = [faq.to_dict() for faq in faqs]
     return {"faqs": data}
+
+@sheet_router.post("/sheet/refresh", response_model=dict)
+def refresh_cache(cache_type: str = None):
+    """
+    Manually refresh the cache for Google Sheets data.
+
+    Args:
+        cache_type: Optional. Specify which cache to refresh:
+                   'schedules', 'resources', 'sponsors', 'directors', 'faqs', 'prizes'
+                   If not provided, refreshes all caches.
+
+    Returns:
+        Dictionary with success status and list of invalidated caches
+    """
+    invalidated = sheets.invalidate_cache(cache_type)
+
+    if not invalidated:
+        return {
+            "success": False,
+            "message": f"Invalid cache type: {cache_type}",
+            "invalidated": []
+        }
+
+    return {
+        "success": True,
+        "message": f"Cache refreshed successfully",
+        "invalidated": invalidated
+    }
